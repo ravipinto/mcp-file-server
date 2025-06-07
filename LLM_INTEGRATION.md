@@ -14,7 +14,7 @@ Claude Desktop has built-in MCP support. Just add this to your Claude config:
     "file-server": {
       "command": "uv",
       "args": ["run", "python", "main.py"],
-      "cwd": "/Users/ravi/Work/Source/py/mcp"
+      "cwd": "/path/to/your/mcp-file-server"
     }
   }
 }
@@ -46,7 +46,7 @@ async def use_with_openai():
             "file-server": {
                 "command": "uv",
                 "args": ["run", "python", "main.py"],
-                "cwd": "/Users/ravi/Work/Source/py/mcp"
+                "cwd": "/path/to/your/mcp-file-server"
             }
         }
     }
@@ -151,7 +151,7 @@ async def integrate_with_any_llm():
             "file-server": {
                 "command": "uv",
                 "args": ["run", "python", "main.py"],
-                "cwd": "/Users/ravi/Work/Source/py/mcp"
+                "cwd": "/path/to/your/mcp-file-server"
             }
         }
     }
