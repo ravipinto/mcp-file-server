@@ -119,6 +119,10 @@ async def list_tools():
 async def execute_file_operation(operation: FileOperation):
     """Execute a file operation through MCP."""
     try:
+        print(f"📝 Received operation: {operation.operation}")
+        print(f"📁 Path: {operation.path}")
+        print(f"📄 Content: {operation.content}")
+        
         toolkit = await get_toolkit()
         
         # Prepare arguments
@@ -126,8 +130,12 @@ async def execute_file_operation(operation: FileOperation):
         if operation.content is not None:
             kwargs["content"] = operation.content
         
+        print(f"🔧 Calling tool with kwargs: {kwargs}")
+        
         # Execute the operation
         result = await toolkit.call_tool_async(operation.operation, **kwargs)
+        
+        print(f"✅ Tool result: {result}")
         
         # Check if result indicates an error
         if result.startswith("Error"):
@@ -143,6 +151,9 @@ async def execute_file_operation(operation: FileOperation):
         )
         
     except Exception as e:
+        print(f"❌ Error in file operation: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -150,17 +161,30 @@ async def execute_file_operation(operation: FileOperation):
 @app.post("/read-file")
 async def read_file(path: str):
     """Read a file."""
-    toolkit = await get_toolkit()
-    result = await toolkit.call_tool_async("read_file", path=path)
-    return {"result": result}
+    try:
+        print(f"📖 Reading file: {path}")
+        toolkit = await get_toolkit()
+        result = await toolkit.call_tool_async("read_file", path=path)
+        print(f"✅ Read result: {result}")
+        return {"result": result}
+    except Exception as e:
+        print(f"❌ Read error: {e}")
+        return {"result": f"Error: {str(e)}"}
 
 
 @app.post("/write-file")
 async def write_file(path: str, content: str):
     """Write to a file."""
-    toolkit = await get_toolkit()
-    result = await toolkit.call_tool_async("write_file", path=path, content=content)
-    return {"result": result}
+    try:
+        print(f"📝 Writing file: {path}")
+        print(f"📄 Content: {content}")
+        toolkit = await get_toolkit()
+        result = await toolkit.call_tool_async("write_file", path=path, content=content)
+        print(f"✅ Write result: {result}")
+        return {"result": result}
+    except Exception as e:
+        print(f"❌ Write error: {e}")
+        return {"result": f"Error: {str(e)}"}
 
 
 @app.post("/list-directory")
@@ -195,7 +219,7 @@ if __name__ == "__main__":
     
     uvicorn.run(
         "n8n_server:app",
-        host="0.0.0.0",
+        host="0.0.0.0",  # Bind to all interfaces for n8n access
         port=8000,
         reload=True,
         log_level="info"

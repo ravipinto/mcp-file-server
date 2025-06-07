@@ -1,0 +1,103 @@
+{
+  "name": "MCP File Server - Simple Query Params",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://192.168.0.116:8000/health"
+      },
+      "id": "health-check",
+      "name": "Health Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.0.116:8000/write-file",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "path",
+              "value": "/tmp/n8n_simple_test.txt"
+            },
+            {
+              "name": "content",
+              "value": "Hello from n8n using query parameters!"
+            }
+          ]
+        }
+      },
+      "id": "write-file",
+      "name": "Write File (Query Params)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.0.116:8000/read-file",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "path",
+              "value": "/tmp/n8n_simple_test.txt"
+            }
+          ]
+        }
+      },
+      "id": "read-file",
+      "name": "Read File (Query Params)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Health Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Health Check": {
+      "main": [
+        [
+          {
+            "node": "Write File (Query Params)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write File (Query Params)": {
+      "main": [
+        [
+          {
+            "node": "Read File (Query Params)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

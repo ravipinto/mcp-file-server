@@ -1,0 +1,160 @@
+{
+  "name": "MCP File Server - JSON Fixed",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://192.168.0.116:8000/health"
+      },
+      "id": "health-check",
+      "name": "Health Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.0.116:8000/file-operation",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonParameters": {
+          "parameters": [
+            {
+              "name": "operation",
+              "value": "write_file"
+            },
+            {
+              "name": "path", 
+              "value": "/tmp/n8n_json_test.txt"
+            },
+            {
+              "name": "content",
+              "value": "Success! Fixed JSON formatting in n8n."
+            }
+          ]
+        }
+      },
+      "id": "write-file",
+      "name": "Write Test File (JSON Params)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.0.116:8000/file-operation",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonParameters": {
+          "parameters": [
+            {
+              "name": "operation",
+              "value": "read_file"
+            },
+            {
+              "name": "path",
+              "value": "/tmp/n8n_json_test.txt"
+            }
+          ]
+        }
+      },
+      "id": "read-file",
+      "name": "Read Test File (JSON Params)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.0.116:8000/write-file",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "path",
+              "value": "/tmp/n8n_simple_test.txt"
+            },
+            {
+              "name": "content", 
+              "value": "Alternative approach using query params"
+            }
+          ]
+        }
+      },
+      "id": "write-file-simple",
+      "name": "Write File (Simple Endpoint)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 500]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Health Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Health Check": {
+      "main": [
+        [
+          {
+            "node": "Write Test File (JSON Params)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Write File (Simple Endpoint)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Test File (JSON Params)": {
+      "main": [
+        [
+          {
+            "node": "Read Test File (JSON Params)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
