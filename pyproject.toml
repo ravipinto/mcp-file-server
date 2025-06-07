@@ -11,3 +11,14 @@ dependencies = [
 
 [project.scripts]
 mcp-file-server = "main:main"
+
+[project.optional-dependencies]
+langchain = [
+    "langchain-community>=0.3.24",
+    "langchain-openai>=0.3.21",
+]
+
+[dependency-groups]
+langchain = [
+    "langchain>=0.3.25",
+]
