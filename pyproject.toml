@@ -1,0 +1,13 @@
+[project]
+name = "mcp-file-server"
+version = "0.1.0"
+description = "MCP server for file system operations"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "mcp>=1.9.3",
+    "mcp-use>=1.3.0",
+]
+
+[project.scripts]
+mcp-file-server = "main:main"
