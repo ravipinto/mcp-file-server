@@ -65,6 +65,7 @@ lib/
 pyvenv.cfg
 CACHEDIR.TAG
 
-# Local configuration files with personal paths
-run_server_local.sh
-*_local.*
+# Local configuration files with personal paths  
+# Note: run_server_local.sh is now parameterized and safe to include
+*_local.* 
+.env

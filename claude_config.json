@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "file-server": {
-      "command": "/path/to/your/mcp-file-server/run_server.sh"
+      "command": "/Users/ravi/Work/Source/py/mcp/run_server_local.sh"
     }
   }
 }
