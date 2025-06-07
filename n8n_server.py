@@ -7,6 +7,7 @@ This creates REST endpoints that n8n can call to use the MCP file tools.
 
 import asyncio
 import json
+import os
 from typing import Dict, Any
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -209,6 +210,44 @@ async def delete_file(path: str):
     toolkit = await get_toolkit()
     result = await toolkit.call_tool_async("delete_file", path=path)
     return {"result": result}
+
+
+# OpenAI Integration Endpoints
+@app.post("/openai/chat")
+async def openai_chat(request: dict):
+    """OpenAI-compatible chat endpoint with function calling."""
+    try:
+        from openai_integration import create_openai_function_caller
+        
+        messages = request.get("messages", [])
+        model = request.get("model", "gpt-4")
+        api_key = request.get("api_key") or os.getenv("OPENAI_API_KEY")
+        
+        if not api_key:
+            raise HTTPException(status_code=400, detail="OpenAI API key required")
+        
+        caller = await create_openai_function_caller(api_key)
+        result = await caller.chat_with_functions(messages, model)
+        
+        return {
+            "response": result["response"],
+            "function_calls": result["function_calls"],
+            "usage": result["usage"]
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"OpenAI chat error: {str(e)}")
+
+
+@app.get("/openai/functions")
+async def openai_functions():
+    """Get OpenAI function definitions for the MCP tools."""
+    try:
+        from openai_integration import OpenAIFunctionCaller
+        caller = OpenAIFunctionCaller("dummy-key-for-function-definitions")
+        return {"functions": caller.get_function_definitions()}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":
