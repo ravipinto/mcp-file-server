@@ -1,2 +1,9 @@
-
 .lock
+.env
+.python-version
+CACHEDIR.TAG
+__pycache__/
+bin/
+lib/
+mcp_file_server.egg-info/
+pyvenv.cfg
